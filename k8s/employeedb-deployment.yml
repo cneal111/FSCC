@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employeedb-deployment
+  labels:
+    name: employeedb-deployment
+    app: employeedb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: employeedb-deployment
+      app: employeedb
+     
+
+  template:
+    metadata:
+      name: employeedb-deployment
+      labels:
+        name: employeedb-deployment
+        app: employeedb
+    
+    spec:
+      container:
+        - name: employeedb
+          image: codyneal/employeedb
+          ports:
+            - containerPort: 3307
+          env:
+            - name: MYSQL_USER
+              value: "dev_user"
+            - name: MYSQL_PASSWORD
+              value: "Qwzxnmopybghfjdksla4$"

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logindb-deployment
+  labels:
+    name: logindb-deployment
+    app: logindb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: logindb-deployment
+      app: logindb
+     
+
+  template:
+    metadata:
+      name: logindb-deployment
+      labels:
+        name: logindb-deployment
+        app: logindb
+    
+    spec:
+      container:
+        - name: logindb
+          image: codyneal/logindb
+          ports:
+            - containerPort: 3308
+          env:
+            - name: MYSQL_USER
+              value: "dev_user"
+            - name: MYSQL_PASSWORD
+              value: "Qwzxnmopybghfjdksla4$"

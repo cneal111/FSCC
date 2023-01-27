@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+
+  name: discoveryservice
+
+spec:
+  type: nodePort
+  ports:
+    - targetPort: 
+      port:
+      nodePort: 30014
+  
+  selector:
+    app: discoveryservice

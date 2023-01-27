@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discoveryservice-deployment
+  labels:
+    name: discoveryservice-deployment
+    app: discoveryservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: discoveryservice-deployment
+      app: discoveryservice
+     
+
+  template:
+    metadata:
+      name: discoveryservice-deployment
+      labels:
+        name: discoveryservice-deployment
+        app: discoveryservice
+    
+    spec:
+      container:
+        - name: discoveryservice
+          image: codyneal/discoveryservice
+          ports:
+            - containerPort: 8761

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zuulproxy-deployment
+  labels:
+    name: zuulproxy-deployment
+    app: zuulproxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: zuulproxy-deployment
+      app: zuulproxy
+     
+
+  template:
+    metadata:
+      name: zuulproxy-deployment
+      labels:
+        name: zuulproxy-deployment
+        app: zuulproxy
+    
+    spec:
+      container:
+        - name: zuul-gateway
+          image: codyneal/zuulproxy
+          ports:
+            - containerPort: 8080

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loginservice-deployment
+  labels:
+    name: loginservice-deployment
+    app: loginservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: loginservice-deployment
+      app: loginservice
+     
+
+  template:
+    metadata:
+      name: loginservice-deployment
+      labels:
+        name: loginservice-deployment
+        app: loginservice
+    
+    spec:
+      container:
+        - name: loginservice
+          image: codyneal/loginservice
+          ports:
+            - containerPort: 8081

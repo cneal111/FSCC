@@ -1,0 +1,10 @@
+com\ibm\fscc\kafka\service\ProducerService.class
+com\ibm\fscc\kafka\controller\KafkaController.class
+com\ibm\fscc\kafka\service\impl\ProducerServiceImpl.class
+com\ibm\fscc\kafka\KafkaApplication.class
+com\ibm\fscc\kafka\config\KafkaConfig.class
+com\ibm\fscc\kafka\service\impl\ConsumerServiceImpl.class
+com\ibm\fscc\kafka\model\NewUserDto.class
+com\ibm\fscc\kafka\service\ConsumerService.class
+com\ibm\fscc\kafka\model\User.class
+com\ibm\fscc\kafka\repository\KafkaRepository.class

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: employeeservice-pod
+  labels:
+    name: employeeservice-pod
+    app: employeeservice
+
+  spec:
+    containers:
+      - name: employeeservice
+        image: codyneal/employeeservice
+        ports:
+        - containerPort: 8082
+      

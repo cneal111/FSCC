@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+
+  name: loginservice
+
+spec:
+  type: nodePort
+  ports:
+    - targetPort: 
+      port:
+      nodePort:
+  
+  selector:

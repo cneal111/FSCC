@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: zuul-pod
+  labels: 
+    name: zuul-pod
+    app: zuulproxy
+  
+  spec:
+    containers:
+    - name: zuulproxy
+      image: codyneal/zuulproxy
+      ports:
+      - containerPort: 8080
+

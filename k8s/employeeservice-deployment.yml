@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employeeservice-deployment
+  labels:
+    name: employeeservice-deployment
+    app: employeeservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: employeeservice-deployment
+      app: employeeservice
+     
+
+  template:
+    metadata:
+      name: employeeservice-deployment
+      labels:
+        name: employeeservice-deployment
+        app: employeeservice
+    
+    spec:
+      container:
+        - name: employeeservice
+          image: codyneal/employeeservice
+          ports:
+            - containerPort: 8082

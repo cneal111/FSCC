@@ -1,0 +1,183 @@
+services:
+
+  #Employee DB:
+    employeedb:
+      image: codyneal/employeedb
+      container_name: employeedb
+      hostname: employeedb
+      volumes:
+        # - empdb-vol:/var/lib/docker/volumes/empdb-vol/_data
+        - empdb-vol:/var/lib/mysql
+      networks: 
+        - backend
+      ports:
+        - 3307:3307
+
+  #Login DB:
+    logindb:
+      image: codyneal/logindb
+      container_name: logindb
+      hostname: logindb
+      volumes:
+        # - logindb-vol:/var/lib/docker/volumes/logindb-vol/_data
+        - logindb-vol:/var/lib/mysql
+      networks: 
+        - backend
+      ports:
+       - 3308:3308
+
+  #Registration DB:
+    registrationdb:
+      image: mongo
+      container_name: registerdb
+      hostname: registerdb
+      volumes:
+        - registrationdb-vol:/var/lib/mongo
+      networks:
+        - backend
+      ports:
+        - 3309:3309
+  
+  #Login Service
+    login-service:
+      image: codyneal/loginservice
+      container_name: loginservice
+      restart: on-failure
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:mysql://logindb:3308/logindb
+        - SPRING_DATASOURCE_USERNAME=dev_user
+        - SPRING_DATASOURCE_PASSWORD=Qwzxnmopybghfjdksla4$$
+        - eureka.client.service-url.defaultZone=http://discoveryservice:8761/eureka
+
+      networks:
+        - backend
+      ports:
+        - 8081:8081
+      depends_on: 
+        - logindb
+
+
+  #Employee Service
+    employee-service:
+      image: codyneal/employeeservice
+      container_name: employeeservice
+      restart: on-failure
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:mysql://employeedb:3307/employeedb
+        - SPRING_DATASOURCE_USERNAME=dev_user
+        - SPRING_DATASOURCE_PASSWORD=Qwzxnmopybghfjdksla4$$
+        - eureka.client.service-url.defaultZone=http://discoveryservice:8761/eureka
+
+      networks:
+        - backend
+      ports:
+        - 8082:8082
+      depends_on: 
+        - employeedb
+
+  #Registration Service
+    registration-service:
+      image: registrationservice
+      container_name: registrationservice
+      # restart: on-failure
+      environment:
+        # - spring.data.mongodb.uri=mongodb://registerdb:3309/registrationdb
+        # - spring.data.mongodb.host=localhost
+        # - spring.data.mongodb.database=registrationdb
+        # - spring.data.mongodb.username=dev_user
+        # - spring.data.mongodb.password=Qwnmxzopybghfjdksla4$$
+        # - spring.data.mongodb.port=27017
+        - MONGO_INITDB_ROOT_USERNAME=dev_user
+        - MONGO_INITDB_ROOT_PASSWORD=Qwnmxzopybghfjdksla4$$
+        - MONGO_INITDB_DATABASE=registrationdb
+        
+        - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://host.docker.internal:9092
+        - eureka.client.service-url.defaultZone=http://discoveryservice:8761/eureka
+      networks:
+        - backend
+        - kafkaserver
+      ports:
+        - 8083:8083
+      depends_on:
+        - registrationdb
+      
+
+  #Eureka Server
+    discovery-service:
+      image: codyneal/discoveryservice
+      container_name: discoveryservice
+      restart: on-failure
+      environment:
+        - eureka.client.register-with-eureka=false
+        - eureka.client.fetch-registry=false
+      ports:
+        - 8761:8761
+      networks:
+        - backend
+  
+  #Zuul Proxy
+    zuul-gateway:
+      image: codyneal/zuulproxy
+      container_name: zuul-gateway
+      restart: on-failure
+      ports:
+        - 8080:8080
+      
+      environment:
+        - eureka.client.service-url.defaultZone=http://discoveryservice:8761/eureka
+      networks:
+      - backend 
+      - frontend
+
+  #Kafka Server
+    kafka-server:
+      image: bitnami/kafka
+      container_name: kafka-server
+      restart: always
+      networks:
+        - kafkaserver
+      environment:
+        KAFKA_ADVERTISED_HOST_NAME: kafkaserver
+        KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+        ALLOW_PLAINTEXT_LISTENER: "yes"
+        # KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CLIENT:PLAINTEXT, EXTERNAL:PLAINTEXT
+        # KAKFA_CFG_LISTENERS: CLIENT://:9092, EXTERNAL://:9093
+        # KAFKA_CFG_ADVERTISED_LISTENERS: CLIENT://LOCALHOST:9092, EXTERNAL://kafka:9093
+        # KAFKA_CFG_INTER_BROKER_LISTENER_NAME: CLIENT
+        # KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CLIENT:PLAINTEXT, EXTERNAL:PLAINTEXT
+        KAFKA_BROKEER_ID: 1
+        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      ports:
+       - 9092:9092
+      depends_on:
+        - zookeeper
+
+  #Zookeeper
+    zookeeper:
+      image: bitnami/zookeeper
+      container_name: zookeeper
+      restart: on-failure
+      environment:
+        ALLOW_ANONYMOUS_LOGIN: "yes"
+      networks:
+        - kafkaserver
+      ports:
+        - 2181:2181
+      
+
+volumes: 
+  empdb-vol:
+    external: true
+  logindb-vol:
+    external: true
+  registrationdb-vol:
+    external: true  
+
+networks:
+  backend:
+    driver: bridge
+  frontend: 
+    driver: bridge
+  kafkaserver:
+    driver: bridge
+    
